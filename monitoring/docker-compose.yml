@@ -1,0 +1,44 @@
+version: '2'
+
+volumes:
+  filebeat:
+  metricbeat:
+
+services:
+
+  filebeat:
+    build:
+      context: filebeat/
+      args:
+        ELK_VERSION: ${ELK_VERSION:7.3.0}
+    restart: always
+    container_name: filebeat
+    user: root
+    command: --strict.perms=false -e  # -e flag to log to stderr and disable syslog/file output
+    volumes:
+      - filebeat:/usr/share/filebeat/data
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/log/:/var/log/:ro
+      - /var/log/audit/:/var/log/audit/:ro
+    env_file: .env
+
+  metricbeat:
+    build:
+      context: metricbeat/
+      args:
+        ELK_VERSION: ${ELK_VERSION:7.3.0}
+    restart: always
+    container_name: metricbeat
+    user: root
+    command: -system.hostfs=/hostfs --strict.perms=false -e  # -e flag to log to stderr and disable syslog/file output
+    volumes:
+      - metricbeat:/usr/share/metricbeat/data
+      - /proc:/hostfs/proc:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /:/hostfs:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+#    https://github.com/elastic/beats/issues/6932
+#    cap_add:
+#      - SYS_PTRACE
+    env_file: .env

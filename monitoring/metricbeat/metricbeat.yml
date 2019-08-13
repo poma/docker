@@ -1,0 +1,95 @@
+# https://github.com/elastic/beats/blob/master/metricbeat/metricbeat.reference.yml
+
+#================================ Autodiscovery ===============================
+# Autodiscover allows you to detect changes in the system and spawn new modules as they happen.
+metricbeat.autodiscover:
+  providers:
+    - type: docker
+      # https://www.elastic.co/guide/en/beats/metricbeat/current/configuration-autodiscover-hints.html
+      hints.enabled: true
+
+metricbeat.modules:
+  #------------------------------- System Module -------------------------------
+  - module: system
+    metricsets:
+      - cpu
+      - load
+      - memory
+      - network
+      - process
+      - process_summary
+      - core
+      - diskio
+      - socket
+      - socket_summary
+    processes: ['.*']
+    process.include_top_n:
+      by_cpu: 5
+      by_memory: 5
+    period: 10s
+    cpu.metrics:  ["percentages"]
+    core.metrics: ["percentages"]
+
+  - module: system
+    period: 1m
+    metricsets:
+      - filesystem
+      - fsstat
+      - raid
+      - entropy
+    processors:
+      - drop_event.when.regexp:
+          system.filesystem.mount_point: '^/(sys|cgroup|proc|dev|etc|host|lib)($|/)'
+
+ metricbeat.modules:
+  - module: system
+    period: 15m
+    metricsets:
+      - uptime
+
+  #------------------------------- Docker Module -------------------------------
+  - module: docker
+    metricsets:
+      - container
+      - cpu
+      - diskio
+      - healthcheck
+      - info
+      - memory
+      - network
+#      - event
+#      - image
+    hosts: ["unix:///var/run/docker.sock"]
+    period: 10s
+
+#================================ Processors ===================================
+processors:
+  - add_cloud_metadata: ~
+  - add_docker_metadata: ~
+  - add_locale:
+      format: offset
+  - add_host_metadata:
+      netinfo.enabled: true
+
+#========================== Elasticsearch output ===============================
+output.elasticsearch:
+  hosts: ${ELASTICSEARCH_HOST:elasticsearch}:${ELASTICSEARCH_PORT:9200}
+  username: ${ELASTICSEARCH_USERNAME:elastic}
+  password: ${ELASTICSEARCH_PASSWORD:changeme}
+  protocol: ${ELASTICSEARCH_PROTOCOL:http}
+
+#============================== Kibana =========================================
+setup.kibana:
+  host: ${KIBANA_HOST:kibana}:${KIBANA_PORT:5601}
+  username: ${ELASTICSEARCH_USERNAME:elastic}
+  password: ${ELASTICSEARCH_PASSWORD:changeme}
+  protocol: ${ELASTICSEARCH_PROTOCOL:http}
+
+#============================== Dashboards =====================================
+setup.dashboards:
+  enabled: true
+
+#============================== Xpack Monitoring ===============================
+xpack.monitoring:
+  enabled: true
+  elasticsearch:
