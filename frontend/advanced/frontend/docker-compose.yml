@@ -1,4 +1,4 @@
-version: '2'
+version: '2.1'
 
 services:
   nginx:
@@ -72,6 +72,7 @@ volumes:
   html:
   certs:
 
+# 5 additional network slots for project isolation
 networks:
   default:
   frontend1:
