@@ -23,6 +23,11 @@ processors:
   - add_locale: ~
   - add_host_metadata:
       netinfo.enabled: true
+  - drop_event:
+      when:
+        contains:
+          message: "comm=\"metricbeat\" requested_mask=\"trace\" denied_mask=\"trace\""
+          event.dataset: system.syslog
 
 #========================== Elasticsearch output ===============================
 output.elasticsearch:
