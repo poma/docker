@@ -1,0 +1,29 @@
+version: "2.2"
+
+services:
+  notifier:
+    image: poma/docker-telegram-notifier
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro # for local instance
+      # - /data/certs:/certs # for remote instance
+    env_file: ./.env
+
+  # If agent is not already installed on the host machine
+  digitalocean-agent:
+    image: digitalocean/do-agent:stable
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+
+#  example:
+#    image: hello-world
+#    labels:
+#       telegram-notifier.monitor: true  # always monitor
+#       telegram-notifier.monitor: false # never monitor
+#       # no label = monitor only when not using whitelist
+#    # example docker healthcheck
+#    healthcheck:
+#      test: curl -sS http://127.0.0.1:8545 || exit 1
+#      interval: 30s
+#      timeout: 10s
+#      retries: 3
