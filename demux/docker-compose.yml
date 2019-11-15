@@ -1,0 +1,26 @@
+version: 2
+
+# don't forget to unmap the ports in frontend and vpn containers
+services:
+  sslh:
+    image: shaddysignal/sslh-hub
+    ports:
+      - 443:443
+    environment:
+      HTTPS_HOST: nginx
+      HTTPS_PORT: 443
+      OPENVPN_HOST: openvpn
+      OPENVPN_PORT: 1194
+      SSH_HOST: host.docker.internal
+      SSH_PORT: 22
+    networks:
+      - frontend
+      - vpn
+
+networks:
+  frontend:
+    external:
+      name: frontend_default
+  vpn:
+    external:
+      name: vpn_default

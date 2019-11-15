@@ -1,0 +1,21 @@
+version: '2'
+
+# before first run:
+# docker-compose run --rm openvpn ovpn_genconfig -u udp://vpn.viking-studio.com
+# docker-compose run --rm openvpn ovpn_initpki
+# docker-compose run --rm openvpn easyrsa build-client-full poma nopass
+# docker-compose run --rm openvpn ovpn_getclient poma > poma.ovpn
+# more info: https://github.com/kylemanna/docker-openvpn/blob/master/docs/docker-compose.md
+
+services:
+  openvpn:
+    image: kylemanna/openvpn
+    volumes:
+      - vpn:/etc/openvpn
+    ports:
+      - 1194:1194/udp
+    cap_add:
+      - NET_ADMIN
+
+volumes:
+  vpn:
