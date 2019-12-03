@@ -3,6 +3,7 @@ version: "2.2"
 services:
   notifier:
     image: poma/docker-telegram-notifier
+    restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro # for local instance
       # - /data/certs:/certs # for remote instance
@@ -11,6 +12,7 @@ services:
   # If agent is not already installed on the host machine
   digitalocean-agent:
     image: digitalocean/do-agent:stable
+    restart: always
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
