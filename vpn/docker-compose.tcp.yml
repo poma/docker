@@ -1,7 +1,7 @@
 version: '2'
 
 # before first run:
-# docker-compose run --rm openvpn ovpn_genconfig -u udp://vpn.viking-studio.com
+# docker-compose run --rm openvpn ovpn_genconfig -u tcp://vpn.viking-studio.com:443
 # docker-compose run --rm openvpn ovpn_initpki nopass
 # docker-compose run --rm openvpn easyrsa build-client-full poma nopass
 # docker-compose run --rm openvpn ovpn_getclient poma > poma.ovpn
@@ -10,12 +10,21 @@ version: '2'
 services:
   openvpn:
     image: kylemanna/openvpn
+    command: ovpn_run --proto tcp
     volumes:
       - vpn:/etc/openvpn
     ports:
-      - 1194:1194/udp
+      - 443:1194/tcp
     cap_add:
       - NET_ADMIN
+    # https://github.com/kylemanna/docker-openvpn/blob/master/docs/tcp.md
+    # environment:
+    #   port-share: nginx 433
 
 volumes:
   vpn:
+
+# networks:
+#   default:
+#     external:
+#       name: frontend_default
