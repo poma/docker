@@ -1,0 +1,74 @@
+version: '2.1'
+
+volumes:
+  elastic:
+  kibana:
+
+services:
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.3.0
+    restart: always
+    volumes:
+      - elastic:/usr/share/elasticsearch/data
+    ports:
+      - "127.0.0.1:9200:9200"
+      # - "127.0.0.1:9300:9300"
+    env_file: .env
+    environment:
+      VIRTUAL_PORT: 9200
+      VIRTUAL_HOST: elasticsearch.poma.in
+      LETSENCRYPT_HOST: elasticsearch.poma.in
+      ES_JAVA_OPTS: "-Xmx1024m -Xms1024m"
+      cluster.name: docker-cluster
+      network.host: 0.0.0.0
+      discovery.type: single-node
+      xpack.license.self_generated.type: basic
+      xpack.security.enabled: "true"
+      xpack.monitoring.collection.enabled: "true"
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.3.0
+    restart: always
+    depends_on:
+      - elasticsearch
+    volumes:
+      - kibana:/usr/share/kibana/data
+    # ports:
+    #   - "5601:5601"
+    healthcheck:
+      test: wget -qO- http://localhost:5601 > /dev/null
+      interval: 30s
+      retries: 3
+    env_file: .env
+    environment:
+      VIRTUAL_HOST: kibana.poma.in
+      LETSENCRYPT_HOST: kibana.poma.in
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      LS_JAVA_OPTS: "-Xmx1024m -Xms1024m"
+      # SERVER_NAME: kibana
+
+#  logstash:
+#    # image: docker.elastic.co/logstash/logstash:7.3.0
+#    build:
+#      context: logstash/
+#      args:
+#        ELK_VERSION: 7.3.0
+#    restart: always
+#    depends_on:
+#      - elasticsearch
+#    # ports:
+#    #   - "5000:5000"
+#    #   - "9600:9600"
+#    env_file: .env
+#    environment:
+#      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+#      XPACK_MONITORING_ELASTICSEARCH_URL: http://elasticsearch:9200
+#      XPACK_MONITORING_ELASTICSEARCH_USERNAME: elastic
+#      XPACK_MONITORING_ELASTICSEARCH_PASSWORD: changeme
+
+
+networks:
+  default:
+    external:
+      name: frontend_default
