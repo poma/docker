@@ -17,13 +17,6 @@ services:
       co.elastic.logs/module: nginx
       co.elastic.logs/fileset.stdout: access
       co.elastic.logs/fileset.stderr: error
-    networks:
-      - default
-      - frontend1
-      - frontend2
-      - frontend3
-      - frontend4
-      - frontend5
 
   dockergen:
     image: poma/docker-gen
@@ -36,13 +29,6 @@ services:
       - nginx
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-    networks:
-      - default
-      - frontend1
-      - frontend2
-      - frontend3
-      - frontend4
-      - frontend5
 
   letsencrypt:
     image: jrcs/letsencrypt-nginx-proxy-companion
@@ -53,30 +39,9 @@ services:
     volumes_from:
       - nginx
       - dockergen
-    networks:
-      - default
-      - frontend1
-      - frontend2
-      - frontend3
-      - frontend4
-      - frontend5
 
 volumes:
   conf:
   vhost:
   html:
   certs:
-
-# 5 additional network slots for project isolation
-networks:
-  default:
-  frontend1:
-    name: frontend1
-  frontend2:
-    name: frontend2
-  frontend3:
-    name: frontend3
-  frontend4:
-    name: frontend4
-  frontend5:
-    name: frontend5
