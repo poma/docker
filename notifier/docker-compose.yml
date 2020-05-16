@@ -9,14 +9,6 @@ services:
       # - /data/certs:/certs # for remote instance
     env_file: ./.env
 
-  # If agent is not already installed on the host machine
-  digitalocean-agent:
-    image: digitalocean/do-agent:stable
-    restart: always
-    volumes:
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-
 #  example:
 #    image: hello-world
 #    labels:
