@@ -9,6 +9,7 @@ services:
       - 80:80
       - 443:443
     volumes:
+      - htpasswd:/etc/nginx/htpasswd:ro
       - conf:/etc/nginx/conf.d
       - vhost:/etc/nginx/vhost.d
       - html:/usr/share/nginx/html
@@ -41,6 +42,7 @@ services:
       - dockergen
 
 volumes:
+  htpasswd:
   conf:
   vhost:
   html:
