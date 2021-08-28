@@ -1,0 +1,14 @@
+version: '2'
+
+services:
+  hardhat:
+    build: .
+    environment: 
+      VIRTUAL_HOST: hh.poma.in
+      LETSENCRYPT_HOST: hh.poma.in
+      RPC_URL: http://geth:8545 
+
+networks:
+  default:
+    external:
+      name: frontend_default
