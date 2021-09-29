@@ -1,0 +1,28 @@
+version: '2'
+
+services:
+  wireguard:
+    image: linuxserver/wireguard
+    restart: always
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      PEERS: 1
+      # optional
+      # SERVERURL: example.com
+      # SERVERPORT: 51820
+      # PEERDNS: auto
+      # INTERNAL_SUBNET: 10.13.13.0
+      # ALLOWEDIPS: 0.0.0.0/0
+      # PUID: 1000
+      # PGID: 1000
+      # TZ: Europe/London
+    volumes:
+      - config:/config
+      - /lib/modules:/lib/modules
+    ports:
+      - 51820:51820/udp
+
+volumes:
+  config:
