@@ -11,12 +11,11 @@ services:
   openvpn:
     image: kylemanna/openvpn
     command: ovpn_run --proto tcp
+    cap_add: [ NET_ADMIN ]
     volumes:
       - vpn:/etc/openvpn
     ports:
       - 443:1194/tcp
-    cap_add:
-      - NET_ADMIN
     # https://github.com/kylemanna/docker-openvpn/blob/master/docs/tcp.md
     # environment:
     #   port-share: nginx 433

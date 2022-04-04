@@ -4,9 +4,9 @@ services:
   wireguard:
     image: linuxserver/wireguard
     restart: always
-    cap_add:
-      - NET_ADMIN
-      - SYS_MODULE
+    cap_add: [NET_ADMIN, SYS_MODULE]
+    # sysctls:
+    #   - net.ipv4.conf.all.src_valid_mark=1
     environment:
       PEERS: 1
       # optional
