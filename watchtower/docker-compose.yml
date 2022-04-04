@@ -1,0 +1,12 @@
+version: '2'
+
+services:
+  watchtower:
+    image: containrrr/watchtower
+    restart: always
+    environment:
+      WATCHTOWER_POLL_INTERVAL: 30
+      WATCHTOWER_LABEL_ENABLE: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /root/.docker/config.json:/config.json
